@@ -1,12 +1,10 @@
 {
-  "name": "hgt-elevation",
+  "name": "@tsl-tuertscher/hgt-elevation",
   "version": "1.0.0",
   "description": "Get elevation from hgt file",
   "main": "build/app.js",
   "types": "build/app.d.ts",
-  "author": {
-    "name": "Stefan Tuertscher"
-  },
+  "author": "Stefan Tuertscher",
   "jest": {
     "verbose": true,
     "transform": {
@@ -22,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tsl-tuertscher/hgt-elevatione"
+    "url": "git+https://github.com/tsl-tuertscher/hgt-elevatione.git"
   },
   "scripts": {
     "test": "jest",
@@ -48,5 +46,16 @@
   "dependencies": {
     "fs": "0.0.1-security",
     "fs-extra": "9.0.1"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/tsl-tuertscher/hgt-elevatione/issues"
+  },
+  "homepage": "https://github.com/tsl-tuertscher/hgt-elevatione#readme",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "hgt"
+  ],
+  "license": "MIT"
 }
