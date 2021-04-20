@@ -1,0 +1,52 @@
+{
+  "name": "hgt-elevation",
+  "version": "1.0.0",
+  "description": "Get elevation from hgt file",
+  "main": "build/app.js",
+  "types": "build/app.d.ts",
+  "author": {
+    "name": "Stefan Tuertscher"
+  },
+  "jest": {
+    "verbose": true,
+    "transform": {
+      "^.+\\.(t|j)sx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsl-tuertscher/hgt-elevatione"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src"
+  },
+  "devDependencies": {
+    "@types/node": "12.12.2",
+    "@types/jest": "22.2.3",
+    "jest": "25.2.1",
+    "prettier": "^1.14.3",
+    "reflect-metadata": "^0.1.12",
+    "ts-jest": "24.0.2",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0",
+    "typescript": "3.5.3"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "fs-extra": "9.0.1"
+  }
+}
