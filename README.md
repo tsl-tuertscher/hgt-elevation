@@ -3,10 +3,16 @@
 # hgt-elevation
 Get elevation from a hgt file
 
+## Install
+
+```
+npm install @tsl-tuertscher/hgt-elevation
+```
+
 ## Usage
 The files need to be provided as tiles. The tile grid starts at the prime meridian on the south pole (0, -90). The tessellation describes the number of tiles from the south (-90°) to the north (90°) pole. 180 means that the tile size is 1°x 1°.
 
-```
+```js
 import { Hgt } from '@tsl-tuertscher/hgt-elevation';
 
 ...
