@@ -1,7 +1,7 @@
 ![example workflow](https://github.com/tsl-tuertscher/hgt-elevation/actions/workflows/main.yml/badge.svg)
 ![example workflow](https://github.com/tsl-tuertscher/hgt-elevation/actions/workflows/npm.yml/badge.svg)
 # hgt-elevation
-Get elevation from a hgt file
+Get the elevation from a specific coordinate of a hgt file
 
 ## Install
 
