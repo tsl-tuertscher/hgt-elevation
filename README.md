@@ -20,7 +20,7 @@ import { Hgt } from '@tsl-tuertscher/hgt-elevation';
 const hgt = new Hgt({
   tessellation: 180,
   gridSize: 1201,
-  filePath: './test/1201/',
+  filePath: './test/1201/{tessellation}/{x}/{y}.hgt',
 });
 
 const ele = await hgt.getElevationFromCoordinate([

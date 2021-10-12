@@ -1,13 +1,16 @@
 ﻿import * as fs from 'fs-extra';
+import * as request from 'request';
 
 export class Hgt {
-  private config: HgtInterface;
+  public filePathIsUrl: boolean = false;
 
+  private config: HgtInterface;
   private data: any;
-  private acitveFile: string = '';
+  private acitveFile: string = "";
 
   constructor(config: HgtInterface) {
     this.config = config;
+    this.filePathIsUrl = this.isfilePathUrl(config.filePath);
   }
 
   public async getElevationFromCoordinate(point: number[]): Promise<number> {
@@ -30,10 +33,33 @@ export class Hgt {
 
     if (this.acitveFile !== newFilePath) {
       this.acitveFile = newFilePath;
-      if (!fs.existsSync(this.config.filePath + this.acitveFile)) {
-        throw new Error('Missing file: ' + this.config.filePath + this.acitveFile);
+      if (this.filePathIsUrl) {
+        this.data = await this.fetch(
+          this.config.filePath
+          .replace("{tessellation}", this.config.tessellation.toString())
+          .replace("{x}", xPath.toString())
+          .replace("{y}", yPath.toString())
+        );
+
+      } else if (!fs.existsSync(
+        this.config.filePath
+        .replace("{tessellation}", this.config.tessellation.toString())
+        .replace("{x}", xPath.toString())
+        .replace("{y}", yPath.toString())
+      ) && !this.filePathIsUrl) {
+        throw new Error('Missing file: ' +           this.config.filePath
+        .replace("{tessellation}", this.config.tessellation.toString())
+        .replace("{x}", xPath.toString())
+        .replace("{y}", yPath.toString()));
+
+      } else {
+        this.data = fs.readFileSync(          
+          this.config.filePath
+          .replace("{tessellation}", this.config.tessellation.toString())
+          .replace("{x}", xPath.toString())
+          .replace("{y}", yPath.toString())
+        , null);
       }
-      this.data = fs.readFileSync(this.config.filePath + this.acitveFile, null);
     }
 
     let x = (point[0] - Math.floor(point[0])) * (this.config.gridSize - 1);
@@ -70,16 +96,72 @@ export class Hgt {
 
     if (this.acitveFile !== newFilePath) {
       this.acitveFile = newFilePath;
-      if (!fs.existsSync(this.config.filePath + this.acitveFile)) {
-        throw new Error('Missing file: ' + this.config.filePath + this.acitveFile);
+      if (this.filePathIsUrl) {
+        this.data = await this.fetch(
+          this.config.filePath
+          .replace("{tessellation}", this.config.tessellation.toString())
+          .replace("{x}", xPath.toString())
+          .replace("{y}", yPath.toString())
+        );
+
+      } else if (!fs.existsSync(
+        this.config.filePath
+        .replace("{tessellation}", this.config.tessellation.toString())
+        .replace("{x}", xPath.toString())
+        .replace("{y}", yPath.toString())
+      ) && !this.filePathIsUrl) {
+        throw new Error('Missing file: ' +           this.config.filePath
+        .replace("{tessellation}", this.config.tessellation.toString())
+        .replace("{x}", xPath.toString())
+        .replace("{y}", yPath.toString()));
+
+      } else {
+        this.data = fs.readFileSync(          
+          this.config.filePath
+          .replace("{tessellation}", this.config.tessellation.toString())
+          .replace("{x}", xPath.toString())
+          .replace("{y}", yPath.toString())
+        , null);
       }
-      this.data = fs.readFileSync(this.config.filePath + this.acitveFile, null);
     }
 
     y = this.config.gridSize - y - 1;
 
     const index = Math.floor(y) * this.config.gridSize * 2 + Math.floor(x) * 2;
     return parseFloat(this.data.readInt16BE(index));
+  }
+
+  private isfilePathUrl(path: string): boolean {
+    if (path.search(/^http/i) === -1) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  private fetch(url: string): Promise<any> { 
+    return new Promise((resolve, reject) => {
+      const options = {
+        method: 'GET',
+        url,
+        encoding: null,
+        timeout: 5000
+      };
+
+      request(options, (error, response, body) => {
+          if (error) {
+              reject(error);
+
+          } else {
+              if (response.statusCode < 400) {
+                  resolve(body);
+
+              } else {
+                  reject();
+              };
+          };
+      });
+    })
   }
 }
 
