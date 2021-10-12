@@ -6,7 +6,7 @@ export class Hgt {
 
   private config: HgtInterface;
   private data: any;
-  private acitveFile: string = "";
+  private acitveFile: string = '';
 
   constructor(config: HgtInterface) {
     this.config = config;
@@ -36,29 +36,34 @@ export class Hgt {
       if (this.filePathIsUrl) {
         this.data = await this.fetch(
           this.config.filePath
-          .replace("{tessellation}", this.config.tessellation.toString())
-          .replace("{x}", xPath.toString())
-          .replace("{y}", yPath.toString())
+            .replace('{tessellation}', this.config.tessellation.toString())
+            .replace('{x}', xPath.toString())
+            .replace('{y}', yPath.toString()),
         );
-
-      } else if (!fs.existsSync(
-        this.config.filePath
-        .replace("{tessellation}", this.config.tessellation.toString())
-        .replace("{x}", xPath.toString())
-        .replace("{y}", yPath.toString())
-      ) && !this.filePathIsUrl) {
-        throw new Error('Missing file: ' +           this.config.filePath
-        .replace("{tessellation}", this.config.tessellation.toString())
-        .replace("{x}", xPath.toString())
-        .replace("{y}", yPath.toString()));
-
-      } else {
-        this.data = fs.readFileSync(          
+      } else if (
+        !fs.existsSync(
           this.config.filePath
-          .replace("{tessellation}", this.config.tessellation.toString())
-          .replace("{x}", xPath.toString())
-          .replace("{y}", yPath.toString())
-        , null);
+            .replace('{tessellation}', this.config.tessellation.toString())
+            .replace('{x}', xPath.toString())
+            .replace('{y}', yPath.toString()),
+        ) &&
+        !this.filePathIsUrl
+      ) {
+        throw new Error(
+          'Missing file: ' +
+            this.config.filePath
+              .replace('{tessellation}', this.config.tessellation.toString())
+              .replace('{x}', xPath.toString())
+              .replace('{y}', yPath.toString()),
+        );
+      } else {
+        this.data = fs.readFileSync(
+          this.config.filePath
+            .replace('{tessellation}', this.config.tessellation.toString())
+            .replace('{x}', xPath.toString())
+            .replace('{y}', yPath.toString()),
+          null,
+        );
       }
     }
 
@@ -99,29 +104,34 @@ export class Hgt {
       if (this.filePathIsUrl) {
         this.data = await this.fetch(
           this.config.filePath
-          .replace("{tessellation}", this.config.tessellation.toString())
-          .replace("{x}", xPath.toString())
-          .replace("{y}", yPath.toString())
+            .replace('{tessellation}', this.config.tessellation.toString())
+            .replace('{x}', xPath.toString())
+            .replace('{y}', yPath.toString()),
         );
-
-      } else if (!fs.existsSync(
-        this.config.filePath
-        .replace("{tessellation}", this.config.tessellation.toString())
-        .replace("{x}", xPath.toString())
-        .replace("{y}", yPath.toString())
-      ) && !this.filePathIsUrl) {
-        throw new Error('Missing file: ' +           this.config.filePath
-        .replace("{tessellation}", this.config.tessellation.toString())
-        .replace("{x}", xPath.toString())
-        .replace("{y}", yPath.toString()));
-
-      } else {
-        this.data = fs.readFileSync(          
+      } else if (
+        !fs.existsSync(
           this.config.filePath
-          .replace("{tessellation}", this.config.tessellation.toString())
-          .replace("{x}", xPath.toString())
-          .replace("{y}", yPath.toString())
-        , null);
+            .replace('{tessellation}', this.config.tessellation.toString())
+            .replace('{x}', xPath.toString())
+            .replace('{y}', yPath.toString()),
+        ) &&
+        !this.filePathIsUrl
+      ) {
+        throw new Error(
+          'Missing file: ' +
+            this.config.filePath
+              .replace('{tessellation}', this.config.tessellation.toString())
+              .replace('{x}', xPath.toString())
+              .replace('{y}', yPath.toString()),
+        );
+      } else {
+        this.data = fs.readFileSync(
+          this.config.filePath
+            .replace('{tessellation}', this.config.tessellation.toString())
+            .replace('{x}', xPath.toString())
+            .replace('{y}', yPath.toString()),
+          null,
+        );
       }
     }
 
@@ -139,29 +149,27 @@ export class Hgt {
     }
   }
 
-  private fetch(url: string): Promise<any> { 
+  private fetch(url: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const options = {
         method: 'GET',
         url,
         encoding: null,
-        timeout: 5000
+        timeout: 5000,
       };
 
       request(options, (error, response, body) => {
-          if (error) {
-              reject(error);
-
+        if (error) {
+          reject(error);
+        } else {
+          if (response.statusCode < 400) {
+            resolve(body);
           } else {
-              if (response.statusCode < 400) {
-                  resolve(body);
-
-              } else {
-                  reject();
-              };
-          };
+            reject();
+          }
+        }
       });
-    })
+    });
   }
 }
 
