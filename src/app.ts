@@ -14,8 +14,8 @@ export class Hgt {
   }
 
   public async getTopElevationFromCoordinate(point: number[]): Promise<number> {
-    let [x, y] = await this.getFileIndices(point)
-    
+    let [x, y] = await this.getFileIndices(point);
+
     const px = [
       Math.floor(y) * this.config.gridSize * 2 + Math.floor(x) * 2,
       Math.floor(y) * this.config.gridSize * 2 + Math.ceil(x) * 2,
@@ -33,12 +33,12 @@ export class Hgt {
       parseFloat(this.data.readInt16BE(px[3])),
     ];
 
-    return Math.max(...alt)
+    return Math.max(...alt);
   }
 
   public async getElevationFromCoordinate(point: number[]): Promise<number> {
-    let [x, y] = await this.getFileIndices(point)
-    
+    let [x, y] = await this.getFileIndices(point);
+
     const px = [
       Math.floor(y) * this.config.gridSize * 2 + Math.floor(x) * 2,
       Math.floor(y) * this.config.gridSize * 2 + Math.ceil(x) * 2,
@@ -165,9 +165,9 @@ export class Hgt {
     }
 
     return [
-      (point[0] - Math.floor(point[0])) * (this.config.gridSize - 1), 
-      this.config.gridSize - 1 - (point[1] - Math.floor(point[1])) * (this.config.gridSize - 1)
-    ]
+      (point[0] - Math.floor(point[0])) * (this.config.gridSize - 1),
+      this.config.gridSize - 1 - (point[1] - Math.floor(point[1])) * (this.config.gridSize - 1),
+    ];
   }
 
   private isfilePathUrl(path: string): boolean {
