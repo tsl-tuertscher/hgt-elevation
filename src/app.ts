@@ -164,9 +164,10 @@ export class Hgt {
       }
     }
 
-    let x = (point[0] - Math.floor(point[0])) * (this.config.gridSize - 1);
-    let y = this.config.gridSize - 1 - (point[1] - Math.floor(point[1])) * (this.config.gridSize - 1);
-    return [x, y]
+    return [
+      (point[0] - Math.floor(point[0])) * (this.config.gridSize - 1), 
+      this.config.gridSize - 1 - (point[1] - Math.floor(point[1])) * (this.config.gridSize - 1)
+    ]
   }
 
   private isfilePathUrl(path: string): boolean {
