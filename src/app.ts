@@ -13,63 +13,32 @@ export class Hgt {
     this.filePathIsUrl = this.isfilePathUrl(config.filePath);
   }
 
+  public async getTopElevationFromCoordinate(point: number[]): Promise<number> {
+    let [x, y] = await this.getFileIndices(point)
+    
+    const px = [
+      Math.floor(y) * this.config.gridSize * 2 + Math.floor(x) * 2,
+      Math.floor(y) * this.config.gridSize * 2 + Math.ceil(x) * 2,
+      Math.ceil(y) * this.config.gridSize * 2 + Math.ceil(x) * 2,
+      Math.ceil(y) * this.config.gridSize * 2 + Math.floor(x) * 2,
+    ];
+
+    x = x / (this.config.gridSize - 1);
+    y = y / (this.config.gridSize - 1);
+
+    const alt = [
+      parseFloat(this.data.readInt16BE(px[0])),
+      parseFloat(this.data.readInt16BE(px[1])),
+      parseFloat(this.data.readInt16BE(px[2])),
+      parseFloat(this.data.readInt16BE(px[3])),
+    ];
+
+    return Math.max(...alt)
+  }
+
   public async getElevationFromCoordinate(point: number[]): Promise<number> {
-    let xPath = 0;
-    let yPath = 0;
-
-    if (point[1] < 0) {
-      yPath = Math.floor(((90 + point[1]) * this.config.tessellation) / 180);
-    } else {
-      yPath = Math.floor(((90 + point[1]) * this.config.tessellation) / 180);
-    }
-
-    if (point[0] < 0) {
-      xPath = Math.floor(((360 + point[0]) * this.config.tessellation) / 180);
-    } else {
-      xPath = Math.floor((point[0] * this.config.tessellation) / 180);
-    }
-
-    const newFilePath = this.config.tessellation + '/' + xPath.toString() + '/' + yPath.toString() + '.hgt';
-
-    if (this.acitveFile !== newFilePath) {
-      this.acitveFile = newFilePath;
-      if (this.filePathIsUrl) {
-        this.data = await this.fetch(
-          this.config.filePath
-            .replace('{tessellation}', this.config.tessellation.toString())
-            .replace('{x}', xPath.toString())
-            .replace('{y}', yPath.toString()),
-        );
-      } else if (
-        !fs.existsSync(
-          this.config.filePath
-            .replace('{tessellation}', this.config.tessellation.toString())
-            .replace('{x}', xPath.toString())
-            .replace('{y}', yPath.toString()),
-        ) &&
-        !this.filePathIsUrl
-      ) {
-        throw new Error(
-          'Missing file: ' +
-            this.config.filePath
-              .replace('{tessellation}', this.config.tessellation.toString())
-              .replace('{x}', xPath.toString())
-              .replace('{y}', yPath.toString()),
-        );
-      } else {
-        this.data = fs.readFileSync(
-          this.config.filePath
-            .replace('{tessellation}', this.config.tessellation.toString())
-            .replace('{x}', xPath.toString())
-            .replace('{y}', yPath.toString()),
-          null,
-        );
-      }
-    }
-
-    let x = (point[0] - Math.floor(point[0])) * (this.config.gridSize - 1);
-    let y = this.config.gridSize - 1 - (point[1] - Math.floor(point[1])) * (this.config.gridSize - 1);
-
+    let [x, y] = await this.getFileIndices(point)
+    
     const px = [
       Math.floor(y) * this.config.gridSize * 2 + Math.floor(x) * 2,
       Math.floor(y) * this.config.gridSize * 2 + Math.ceil(x) * 2,
@@ -139,6 +108,65 @@ export class Hgt {
 
     const index = Math.floor(y) * this.config.gridSize * 2 + Math.floor(x) * 2;
     return parseFloat(this.data.readInt16BE(index));
+  }
+
+  private async getFileIndices(point: number[]): Promise<number[]> {
+    let xPath = 0;
+    let yPath = 0;
+
+    if (point[1] < 0) {
+      yPath = Math.floor(((90 + point[1]) * this.config.tessellation) / 180);
+    } else {
+      yPath = Math.floor(((90 + point[1]) * this.config.tessellation) / 180);
+    }
+
+    if (point[0] < 0) {
+      xPath = Math.floor(((360 + point[0]) * this.config.tessellation) / 180);
+    } else {
+      xPath = Math.floor((point[0] * this.config.tessellation) / 180);
+    }
+
+    const newFilePath = this.config.tessellation + '/' + xPath.toString() + '/' + yPath.toString() + '.hgt';
+
+    if (this.acitveFile !== newFilePath) {
+      this.acitveFile = newFilePath;
+      if (this.filePathIsUrl) {
+        this.data = await this.fetch(
+          this.config.filePath
+            .replace('{tessellation}', this.config.tessellation.toString())
+            .replace('{x}', xPath.toString())
+            .replace('{y}', yPath.toString()),
+        );
+      } else if (
+        !fs.existsSync(
+          this.config.filePath
+            .replace('{tessellation}', this.config.tessellation.toString())
+            .replace('{x}', xPath.toString())
+            .replace('{y}', yPath.toString()),
+        ) &&
+        !this.filePathIsUrl
+      ) {
+        throw new Error(
+          'Missing file: ' +
+            this.config.filePath
+              .replace('{tessellation}', this.config.tessellation.toString())
+              .replace('{x}', xPath.toString())
+              .replace('{y}', yPath.toString()),
+        );
+      } else {
+        this.data = fs.readFileSync(
+          this.config.filePath
+            .replace('{tessellation}', this.config.tessellation.toString())
+            .replace('{x}', xPath.toString())
+            .replace('{y}', yPath.toString()),
+          null,
+        );
+      }
+    }
+
+    let x = (point[0] - Math.floor(point[0])) * (this.config.gridSize - 1);
+    let y = this.config.gridSize - 1 - (point[1] - Math.floor(point[1])) * (this.config.gridSize - 1);
+    return [x, y]
   }
 
   private isfilePathUrl(path: string): boolean {

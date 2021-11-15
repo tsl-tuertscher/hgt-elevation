@@ -15,8 +15,11 @@ const online: HgtInterface = {
 describe('Hgt', () => {
   it('offline', async () => {
     const hgt = new Hgt(offline);
-    const elevation = await hgt.getElevationFromCoordinate([9.47, 47.34]);
+    let elevation = await hgt.getElevationFromCoordinate([9.47, 47.34]);
     expect(Math.round(elevation)).toBe(1078);
+
+    elevation = await hgt.getTopElevationFromCoordinate([9.47, 47.34]);
+    expect(Math.round(elevation)).toBe(1105);
   });
   it('online', () => {
     const hgt = new Hgt(online);
